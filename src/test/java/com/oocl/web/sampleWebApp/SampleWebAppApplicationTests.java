@@ -57,8 +57,8 @@ public class SampleWebAppApplicationTests {
     @Test
     public void should_add_new_parking_boy() throws Exception {
         //given
-        int newParkingId = 1;
-        String newParkingBoyInJson = "{\"employeeId\":" + newParkingId + "}";
+        String newParkingBoyEmployeeId = "1";
+        String newParkingBoyInJson = "{\"employeeId\":" + newParkingBoyEmployeeId + "}";
 
         //when
         mvc.perform(post("/parkingboys")
@@ -66,7 +66,20 @@ public class SampleWebAppApplicationTests {
             .content(newParkingBoyInJson)
         )//then
             .andExpect(status().isCreated())
-            .andExpect(header().string("Location", containsString("/parkingboys/"+newParkingId)));
+            .andExpect(header().string("Location", containsString("/parkingboys/"+newParkingBoyEmployeeId)));
+    }
 
+    @Test
+    public void should_throw_exception_due_to_exceed_employeeid_length() throws Exception {
+        //given
+        String newParkingBoyEmployeeIdExceedMaxLength = "The employee id is a non-empty String representing the unique ID for a parking boy";
+        String newParkingBoyInJson = "{\"employeeId\":" + newParkingBoyEmployeeIdExceedMaxLength + "}";
+
+        //when
+        mvc.perform(post("/parkingboys")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(newParkingBoyInJson)
+        )//then
+            .andExpect(status().isBadRequest());
     }
 }
