@@ -68,4 +68,19 @@ public class ParkingLotTests {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", containsString("/parkinglots/"+newParkingLotId)));
     }
+
+    @Test
+    public void should_throw_exception_due_to_exceed_employeeid_length() throws Exception {
+        //given
+        String newParkingLotId = "lot";
+        int newParkingLotCapacityExceedTheMaxLimit = 1000;
+        String newParkingLotInJson = "{\"parkingLotId\":\"" + newParkingLotId + "\", \"capacity\":"+newParkingLotCapacityExceedTheMaxLimit+"}";
+
+        //when
+        mvc.perform(post("/parkinglots")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(newParkingLotInJson)
+        )//then
+                .andExpect(status().isBadRequest());
+    }
 }
