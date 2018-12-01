@@ -34,7 +34,9 @@ public class ParkingLotTests {
     @Test
     public void should_get_parking_lots() throws Exception {
         // Given
-        final ParkingLot Lot = parkingLotRepository.save(new ParkingLot("lot", 50));
+        String newParkingLotId = "lot";
+        int newParkingLotCapacity =50;
+        final ParkingLot Lot = parkingLotRepository.save(new ParkingLot(newParkingLotId, newParkingLotCapacity));
 
         // When
         final MvcResult result = mvc.perform(MockMvcRequestBuilders
@@ -47,7 +49,23 @@ public class ParkingLotTests {
         final ParkingLotResponse[] parkingLots = getContentAsObject(result, ParkingLotResponse[].class);
 
         assertEquals(1, parkingLots.length);
-        assertEquals("lot", parkingLots[0].getParkingLotId());
-        assertEquals(50, parkingLots[0].getCapacity());
+        assertEquals(newParkingLotId, parkingLots[0].getParkingLotId());
+        assertEquals(newParkingLotCapacity, parkingLots[0].getCapacity());
+    }
+
+    @Test
+    public void should_add_new_parking_lot() throws Exception {
+        //given
+        String newParkingLotId = "lot";
+        int newParkingLotCapacity = 50;
+        String newParkingLotInJson = "{\"parkingLotId\":\"" + newParkingLotId + "\", \"capacity\":"+newParkingLotCapacity+"}";
+
+        //when
+        mvc.perform(post("/parkinglots")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(newParkingLotInJson)
+        )//then
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", containsString("/parkinglots/"+newParkingLotId)));
     }
 }
