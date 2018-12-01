@@ -17,6 +17,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
 
 import static com.oocl.web.sampleWebApp.WebTestUtil.getContentAsObject;
 import static org.hamcrest.Matchers.containsString;
@@ -27,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
 public class ParkingBoyTests {
     @Autowired
@@ -35,10 +39,15 @@ public class ParkingBoyTests {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @Test
     public void should_get_parking_boys() throws Exception {
         // Given
+        entityManager.clear();
         final ParkingBoy boy = parkingBoyRepository.save(new ParkingBoy("boy"));
+        parkingBoyRepository.flush();
 
         // When
         final MvcResult result = mvc.perform(MockMvcRequestBuilders

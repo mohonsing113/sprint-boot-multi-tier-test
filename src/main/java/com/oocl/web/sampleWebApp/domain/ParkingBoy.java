@@ -7,14 +7,11 @@ import javax.persistence.*;
 public class ParkingBoy {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(name = "id", unique = true, nullable = false)
+    private long id;
 
     @Column(name = "employee_id", length = 64, unique = true, nullable = false)
     private String employeeId;
-
-    public Long getId() {
-        return id;
-    }
 
     public String getEmployeeId() {
         return employeeId;
