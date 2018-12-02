@@ -79,7 +79,10 @@ public class ParkingBoyResource {
             return ResponseEntity.badRequest().body("some parking lot id(s) not found");
         }
 
-        parkingLots.stream().forEach(parkingLot -> parkingLot.setParkingBoyId(parkingBoy.getEmployeeId()));
+        parkingLots.stream().forEach(parkingLot -> {
+            parkingLot.setParkingBoyId(parkingBoy.getEmployeeId());
+            parkingLotRepository.save(parkingLot);
+        });
 
         return ResponseEntity.ok("add associates success");
     }
