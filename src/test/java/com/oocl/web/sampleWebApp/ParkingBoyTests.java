@@ -197,5 +197,23 @@ public class ParkingBoyTests {
         assertEquals("second_lot", parkingBoy.getParkingLots().get(1).getParkingLotId());
     }
 
+    @Test
+    public void  should_not_update_parking_boy_associate_because_parkingboy_not_found() throws Exception {
+        // When // Then
+        mvc.perform(put("/parkingboys/boythatsnevercreated/parkinglots"))
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    public void  should_not_update_parking_boy_associate_because_parkinglot_not_found() throws Exception {
+        // Given
+        final ParkingBoy boy = parkingBoyRepository.save(new ParkingBoy("boy"));
+
+        // When // Then
+        mvc.perform(put("/parkingboys/boy/parkinglots")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("[\"not_exist_parking_lot\"]"))
+                // Then
+                .andExpect(status().isBadRequest());
+    }
 
 }
