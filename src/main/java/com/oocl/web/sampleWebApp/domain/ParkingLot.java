@@ -24,9 +24,15 @@ public class ParkingLot {
     public ParkingLot() {
     }
 
-    public ParkingLot(String parkingLotId, @Max(100) @Min(100) int capacity) {
+    public ParkingLot(String parkingLotId, int capacity) {
         this.parkingLotId = parkingLotId;
         this.capacity = capacity;
+    }
+
+    public ParkingLot(String parkingLotId, int capacity, String parkingBoyId) {
+        this.parkingLotId = parkingLotId;
+        this.capacity = capacity;
+        this.parkingBoyId = parkingBoyId;
     }
 
     public String getParkingLotId() {
