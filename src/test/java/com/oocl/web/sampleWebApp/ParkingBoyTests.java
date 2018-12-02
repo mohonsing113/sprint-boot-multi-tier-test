@@ -2,6 +2,9 @@ package com.oocl.web.sampleWebApp;
 
 import com.oocl.web.sampleWebApp.domain.ParkingBoy;
 import com.oocl.web.sampleWebApp.domain.ParkingBoyRepository;
+import com.oocl.web.sampleWebApp.domain.ParkingLot;
+import com.oocl.web.sampleWebApp.domain.ParkingLotRepository;
+import com.oocl.web.sampleWebApp.models.ParkingBoyDetailResponse;
 import com.oocl.web.sampleWebApp.models.ParkingBoyResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ParkingBoyTests {
     @Autowired
     private ParkingBoyRepository parkingBoyRepository;
+    @Autowired
+    private ParkingLotRepository parkingLotRepository;
 
     @Autowired
     private MockMvc mvc;
@@ -98,6 +103,7 @@ public class ParkingBoyTests {
         // Given
         entityManager.clear();
         final ParkingBoy boy = parkingBoyRepository.save(new ParkingBoy("boy"));
+        parkingLotRepository.save(new ParkingLot("lot", 40,"boy"));
         parkingBoyRepository.flush();
 
         // When
@@ -108,8 +114,10 @@ public class ParkingBoyTests {
         // Then
         assertEquals(200, result.getResponse().getStatus());
 
-        final ParkingBoyResponse parkingBoy = getContentAsObject(result, ParkingBoyResponse.class);
+        final ParkingBoyDetailResponse parkingBoy = getContentAsObject(result, ParkingBoyDetailResponse.class);
 
         assertEquals("boy", parkingBoy.getEmployeeId());
+        assertEquals("lot", parkingBoy.getParkingLots().get(0).getParkingLotId());
     }
+
 }

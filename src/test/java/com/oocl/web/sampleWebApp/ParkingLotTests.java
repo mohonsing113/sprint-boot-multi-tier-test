@@ -1,7 +1,9 @@
 package com.oocl.web.sampleWebApp;
 
+import com.oocl.web.sampleWebApp.domain.ParkingBoy;
 import com.oocl.web.sampleWebApp.domain.ParkingLot;
 import com.oocl.web.sampleWebApp.domain.ParkingLotRepository;
+import com.oocl.web.sampleWebApp.models.ParkingBoyResponse;
 import com.oocl.web.sampleWebApp.models.ParkingLotResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
