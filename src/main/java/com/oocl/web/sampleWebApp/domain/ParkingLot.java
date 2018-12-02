@@ -1,7 +1,8 @@
 package com.oocl.web.sampleWebApp.domain;
 
-import org.hibernate.validator.constraints.Range;
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @Entity
 @Table(name = "parking_lot")
@@ -10,13 +11,14 @@ public class ParkingLot {
     @Column(name = "id", unique = true, nullable = false)
     private String parkingLotId;
 
-    @Range(min=1, max=100)
+    @Max(100)
+    @Min(100)
     private int capacity;
 
     public ParkingLot() {
     }
 
-    public ParkingLot(String parkingLotId, @Range(min = 1, max = 100) int capacity) {
+    public ParkingLot(String parkingLotId, @Max(100) @Min(100) int capacity) {
         this.parkingLotId = parkingLotId;
         this.capacity = capacity;
     }
