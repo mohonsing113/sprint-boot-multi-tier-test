@@ -7,12 +7,18 @@ import javax.validation.constraints.Min;
 @Entity
 @Table(name = "parking_lot")
 public class ParkingLot {
+
     @Id
-    @Column(name = "id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Column(name = "parking_lot_id", unique = true, nullable = false)
     private String parkingLotId;
 
+    private String parkingBoyId;
+
     @Max(100)
-    @Min(100)
+    @Min(1)
     private int capacity;
 
     public ParkingLot() {
@@ -33,5 +39,17 @@ public class ParkingLot {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+    }
+
+    public void setParkingLotId(String parkingLotId) {
+        this.parkingLotId = parkingLotId;
+    }
+
+    public String getParkingBoyId() {
+        return parkingBoyId;
+    }
+
+    public void setParkingBoyId(String parkingBoyId) {
+        this.parkingBoyId = parkingBoyId;
     }
 }

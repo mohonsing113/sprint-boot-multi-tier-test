@@ -91,4 +91,25 @@ public class ParkingBoyTests {
         )//then
             .andExpect(status().isBadRequest());
     }
+
+
+    @Test
+    public void should_find_parking_boy_by_employee_id() throws Exception {
+        // Given
+        entityManager.clear();
+        final ParkingBoy boy = parkingBoyRepository.save(new ParkingBoy("boy"));
+        parkingBoyRepository.flush();
+
+        // When
+        final MvcResult result = mvc.perform(MockMvcRequestBuilders
+                .get("/parkingboys/boy"))
+                .andReturn();
+
+        // Then
+        assertEquals(200, result.getResponse().getStatus());
+
+        final ParkingBoyResponse parkingBoy = getContentAsObject(result, ParkingBoyResponse.class);
+
+        assertEquals("boy", parkingBoy.getEmployeeId());
+    }
 }
