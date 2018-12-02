@@ -51,6 +51,10 @@ public class ParkingBoyResource {
     public ResponseEntity<ParkingBoyDetailResponse> geByEmployeeId(@PathVariable String employeeId) {
         ParkingBoy parkingBoy = parkingBoyRepository.findFirstByEmployeeId(employeeId);
 
+        if(parkingBoy==null){
+            return ResponseEntity.badRequest().build();
+        }
+
         List<ParkingLotResponse> parkingLotResponses =
                 parkingLotRepository.findByParkingBoyId(parkingBoy.getEmployeeId()).stream()
                         .map(ParkingLotResponse::create).collect(Collectors.toList());

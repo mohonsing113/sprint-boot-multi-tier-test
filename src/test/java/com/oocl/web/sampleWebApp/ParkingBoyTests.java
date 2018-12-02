@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import static com.oocl.web.sampleWebApp.WebTestUtil.getContentAsObject;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,14 +51,13 @@ public class ParkingBoyTests {
     @Test
     public void should_get_parking_boys() throws Exception {
         // Given
-        entityManager.clear();
+        
         final ParkingBoy boy = parkingBoyRepository.save(new ParkingBoy("boy"));
         parkingBoyRepository.flush();
 
         // When
-        final MvcResult result = mvc.perform(MockMvcRequestBuilders
-            .get("/parkingboys"))
-            .andReturn();
+        final MvcResult result = mvc.perform(get("/parkingboys"))
+                .andReturn();
 
         // Then
         assertEquals(200, result.getResponse().getStatus());
@@ -76,11 +76,11 @@ public class ParkingBoyTests {
 
         //when
         mvc.perform(post("/parkingboys")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(newParkingBoyInJson)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(newParkingBoyInJson)
         )//then
-            .andExpect(status().isCreated())
-            .andExpect(header().string("Location", containsString("/parkingboys/"+newParkingBoyEmployeeId)));
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", containsString("/parkingboys/" + newParkingBoyEmployeeId)));
     }
 
     @Test
@@ -91,24 +91,23 @@ public class ParkingBoyTests {
 
         //when
         mvc.perform(post("/parkingboys")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(newParkingBoyInJson)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(newParkingBoyInJson)
         )//then
-            .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
 
     @Test
     public void should_find_parking_boy_by_employee_id_with_one_parking_lot() throws Exception {
         // Given
-        entityManager.clear();
+        
         final ParkingBoy boy = parkingBoyRepository.save(new ParkingBoy("boy"));
-        parkingLotRepository.save(new ParkingLot("lot", 40,"boy"));
+        parkingLotRepository.save(new ParkingLot("lot", 40, "boy"));
         parkingBoyRepository.flush();
 
         // When
-        final MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get("/parkingboys/boy"))
+        final MvcResult result = mvc.perform(get("/parkingboys/boy"))
                 .andReturn();
 
         // Then
@@ -123,15 +122,14 @@ public class ParkingBoyTests {
     @Test
     public void should_find_parking_boy_by_employee_id_with_multiple_parking_lot() throws Exception {
         // Given
-        entityManager.clear();
+        
         final ParkingBoy boy = parkingBoyRepository.save(new ParkingBoy("boy"));
-        parkingLotRepository.save(new ParkingLot("first_lot", 40,"boy"));
-        parkingLotRepository.save(new ParkingLot("second_lot", 60,"boy"));
+        parkingLotRepository.save(new ParkingLot("first_lot", 40, "boy"));
+        parkingLotRepository.save(new ParkingLot("second_lot", 60, "boy"));
         parkingBoyRepository.flush();
 
         // When
-        final MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get("/parkingboys/boy"))
+        final MvcResult result = mvc.perform(get("/parkingboys/boy"))
                 .andReturn();
 
         // Then
@@ -142,6 +140,15 @@ public class ParkingBoyTests {
         assertEquals("boy", parkingBoy.getEmployeeId());
         assertEquals("first_lot", parkingBoy.getParkingLots().get(0).getParkingLotId());
         assertEquals("second_lot", parkingBoy.getParkingLots().get(1).getParkingLotId());
+    }
+
+    @Test
+    public void should_not_find_parking_boy() throws Exception {
+        // When
+        mvc.perform(get("/parkingboys/boythatsnevercreated")
+        )// Then
+                .andExpect(status().isBadRequest());
+
     }
 
 }
