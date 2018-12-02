@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/parkingboys")
@@ -51,7 +50,7 @@ public class ParkingBoyResource {
     public ResponseEntity<ParkingBoyDetailResponse> geByEmployeeId(@PathVariable String employeeId) {
         ParkingBoy parkingBoy = parkingBoyRepository.findFirstByEmployeeId(employeeId);
 
-        if(parkingBoy==null){
+        if (parkingBoy == null) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -61,6 +60,28 @@ public class ParkingBoyResource {
 
         ParkingBoyDetailResponse parkingBoyDetailResponse = ParkingBoyDetailResponse.create(parkingBoy.getEmployeeId(), parkingLotResponses);
         return ResponseEntity.ok(parkingBoyDetailResponse);
+    }
+
+    @PutMapping(value = "/{employeeId}/parkinglots")
+    public ResponseEntity<String> addParkingLot(@PathVariable String employeeId, @RequestBody String[] parkingLotIds) {
+        ParkingBoy parkingBoy = parkingBoyRepository.findFirstByEmployeeId(employeeId);
+
+        if (parkingBoy == null) {
+            return ResponseEntity.badRequest().body("parking boy not found");
+        }
+
+        List<ParkingLot> parkingLots = Arrays.stream(parkingLotIds)
+                .map(id -> parkingLotRepository.findFirstByParkingLotId(id))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        if (parkingLotIds.length != parkingLots.size()) {
+            return ResponseEntity.badRequest().body("some parking lot id(s) not found");
+        }
+
+        parkingLots.stream().forEach(parkingLot -> parkingLot.setParkingBoyId(parkingBoy.getEmployeeId()));
+
+        return ResponseEntity.ok("add associates success");
     }
 
 }
