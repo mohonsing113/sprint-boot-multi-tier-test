@@ -99,7 +99,7 @@ public class ParkingBoyTests {
 
 
     @Test
-    public void should_find_parking_boy_by_employee_id() throws Exception {
+    public void should_find_parking_boy_by_employee_id_with_one_parking_lot() throws Exception {
         // Given
         entityManager.clear();
         final ParkingBoy boy = parkingBoyRepository.save(new ParkingBoy("boy"));
@@ -118,6 +118,30 @@ public class ParkingBoyTests {
 
         assertEquals("boy", parkingBoy.getEmployeeId());
         assertEquals("lot", parkingBoy.getParkingLots().get(0).getParkingLotId());
+    }
+
+    @Test
+    public void should_find_parking_boy_by_employee_id_with_multiple_parking_lot() throws Exception {
+        // Given
+        entityManager.clear();
+        final ParkingBoy boy = parkingBoyRepository.save(new ParkingBoy("boy"));
+        parkingLotRepository.save(new ParkingLot("first_lot", 40,"boy"));
+        parkingLotRepository.save(new ParkingLot("second_lot", 60,"boy"));
+        parkingBoyRepository.flush();
+
+        // When
+        final MvcResult result = mvc.perform(MockMvcRequestBuilders
+                .get("/parkingboys/boy"))
+                .andReturn();
+
+        // Then
+        assertEquals(200, result.getResponse().getStatus());
+
+        final ParkingBoyDetailResponse parkingBoy = getContentAsObject(result, ParkingBoyDetailResponse.class);
+
+        assertEquals("boy", parkingBoy.getEmployeeId());
+        assertEquals("first_lot", parkingBoy.getParkingLots().get(0).getParkingLotId());
+        assertEquals("second_lot", parkingBoy.getParkingLots().get(1).getParkingLotId());
     }
 
 }
